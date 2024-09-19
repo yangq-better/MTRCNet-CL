@@ -2,9 +2,10 @@ import os
 import numpy as np
 import pickle
 
-root_dir = '/home/u2022141214/mtr_20240709/cholec'   # TODO 20240710 改为实际路径
+# root_dir = '/home/u2022141214/mtrcnet_20240918/MTRCNet-CL/cholec'   # TODO 20240710 改为实际路径
+root_dir = '/home/u2022141214/mtr_phase240918/PrivateDataset/private'   # 私人数据实际路径
 img_dir = os.path.join(root_dir, 'data_resize')    # 图片数据
-tool_dir = os.path.join(root_dir, 'tool_annotations')  # 每个图片上使用到的手术工具标注
+# tool_dir = os.path.join(root_dir, 'tool_annotations')  # 每个图片上使用到的手术工具标注（私人数据没有工具标注，需要删除这列吗？）
 phase_dir = os.path.join(root_dir, 'phase_annotations')  # 每个图片对应手术动作的标注
 
 print(root_dir)
@@ -39,13 +40,15 @@ def get_files(root_dir):
 
 
 img_dir_names, img_dir_paths = get_dirs(img_dir)
-tool_file_names, tool_file_paths = get_files(tool_dir)
+# tool_file_names, tool_file_paths = get_files(tool_dir) (删除tool?)
 phase_file_names, phase_file_paths = get_files(phase_dir)
 
 phase_dict = {}
-phase_dict_key = ['Preparation', 'CalotTriangleDissection', 'ClippingCutting', 'GallbladderDissection',
+# phase_dict_key = ['Preparation', 'CalotTriangleDissection', 'ClippingCutting', 'GallbladderDissection',
                   'GallbladderPackaging', 'CleaningCoagulation', 'GallbladderRetraction']
 # 7个手术阶段构建了一个字典, value为0到6
+phase_dict_key = ['Preparation', 'FindBloodVesselAndBronchi', 'LigationOfBloodVesselsAndBronchi', 'CutTheDiseasedLungs',
+                  'CleaningAndSewing'] # 私人数据构建5个手术阶段
 for i in range(len(phase_dict_key)):
     phase_dict[phase_dict_key[i]] = i
 print(phase_dict)
@@ -59,8 +62,8 @@ print(phase_dict)
 
 all_info_all = [] # 长度等于视频数, [img_file_each_path, 手术工具1,..手术工具l], [img_file_each_path, 手术工具1,..手术工具l, 手术动作]
 
-for j in range(len(tool_file_names)):
-    last_tool_index = ''
+for j in range(len(tool_file_names)): # tool删除？
+    last_tool_index = ''  # 
     last_phase_index = ''
     tool_file = open(tool_file_paths[j])
     phase_file = open(phase_file_paths[j])
@@ -97,12 +100,14 @@ for j in range(len(tool_file_names)):
 
 # for k in range(10):
 # print(all_info_all[0][k])
-with open('cholec80.pkl', 'wb') as f:
+# with open('cholec80.pkl', 'wb') as f:
+with open('privatedata.pkl', 'wb') as f: # 修改pkl名
     pickle.dump(all_info_all, f)
 
 import pickle
 
-with open('cholec80.pkl', 'rb') as f:
+# with open('cholec80.pkl', 'rb') as f:
+with open('privatedata.pkl', 'rb') as f: # 修改pkl名
     all_info = pickle.load(f)
 
 train_file_paths = []
@@ -126,7 +131,7 @@ for i in range(1):   # TODO 20240710 只有5个文件, 仅跑通把5个文件都
 print(len(train_file_paths))
 print(len(train_labels))
 
-for i in range(1):   # TODO 20240710 只有5个文件, 仅跑通把5个文件都用了
+for i in range(0,1):   # 第2个文件的视频图像做验证集
 # for i in range(32, 40):   # 中间8个视频图像做验证集
     val_num_each.append(len(all_info[i]))
     for j in range(len(all_info[i])):
@@ -136,7 +141,7 @@ for i in range(1):   # TODO 20240710 只有5个文件, 仅跑通把5个文件都
 print(len(val_file_paths))
 print(len(val_labels))
 
-for i in range(1):   # TODO 20240710 只有5个文件, 仅跑通把5个文件都用了
+for i in range(1,2):   # 第3个文件的视频图像做测试集
 # for i in range(40, 80):  # 后40个视频图像做测试集
     test_num_each.append(len(all_info[i]))
     for j in range(len(all_info[i])):
