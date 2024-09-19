@@ -94,7 +94,7 @@ class RandomCrop(object):
 
     def __init__(self, size, padding=0):
         if isinstance(size, numbers.Number):
-            self.size = (int(size), int(size))
+            self.size = (int(size), int(size)) #这里的int数据需要更改吗？
         else:
             self.size = size
         self.padding = padding
