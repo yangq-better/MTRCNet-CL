@@ -40,7 +40,7 @@ def get_files(root_dir):
 
 
 img_dir_names, img_dir_paths = get_dirs(img_dir)
-# tool_file_names, tool_file_paths = get_files(tool_dir) (删除tool?)
+tool_file_names, tool_file_paths = get_files(tool_dir) 
 phase_file_names, phase_file_paths = get_files(phase_dir)
 
 phase_dict = {}
